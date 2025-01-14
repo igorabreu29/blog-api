@@ -71,7 +71,7 @@ export async function editComment(app: FastifyTypedInstance) {
 
 			await sql`
         UPDATE comments 
-        SET comment = ${commentToUpdate}, 
+        SET comment = ${commentToUpdate}
         WHERE id = ${commentary.id}
       `
 
