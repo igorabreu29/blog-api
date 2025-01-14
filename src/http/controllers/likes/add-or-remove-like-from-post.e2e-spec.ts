@@ -7,7 +7,7 @@ import { makePost } from 'test/factories/make-post.ts'
 import { sql } from '@/lib/postgres.ts'
 import { makeLike } from 'test/factories/make-like.ts'
 
-describe('Add like to post', () => {
+describe('Add or remove like from post', () => {
 	beforeEach(async () => {
 		await sql`DELETE FROM users;`
 		await sql`DELETE FROM posts;`
@@ -20,7 +20,7 @@ describe('Add like to post', () => {
 		await app.close()
 	})
 
-	it('POST /posts/postId/likes', async () => {
+	it('POST /posts/:postId/likes', async () => {
 		const { cookie, user } = await makeAuth()
 		if (!cookie) return
 

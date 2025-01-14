@@ -14,6 +14,7 @@ import { env } from './env/index.ts'
 import { postRoutes } from './http/controllers/posts/index.ts'
 import { userRoutes } from './http/controllers/users/index.ts'
 import { likeRoutes } from './http/controllers/likes/index.ts'
+import { commentRoutes } from './http/controllers/comments/index.ts'
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -46,3 +47,4 @@ app.register(fastifyJwt, {
 app.register(userRoutes)
 app.register(postRoutes)
 app.register(likeRoutes)
+app.register(commentRoutes)
