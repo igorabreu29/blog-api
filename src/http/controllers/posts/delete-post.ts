@@ -22,10 +22,15 @@ export async function deletePost(app: FastifyTypedInstance) {
 						status: z.literal(400),
 						message: z.string(),
 					}),
+					409: z.object({
+						status: z.literal(409),
+						message: z.string(),
+					}),
 				},
 			},
 		},
 		async (req, res) => {
+			const { sub } = req.user
 			const { id } = req.params
 
 			const getPostResult = await sql`
@@ -38,6 +43,13 @@ export async function deletePost(app: FastifyTypedInstance) {
 					status: 400,
 					message: 'Post not found.',
 				})
+
+			if (post.user_id !== sub) {
+				return res.status(409).send({
+					status: 409,
+					message: 'Not allowed!',
+				})
+			}
 
 			await sql`
         DELETE FROM posts 

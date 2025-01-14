@@ -22,11 +22,16 @@ export async function deleteComment(app: FastifyTypedInstance) {
 						status: z.literal(400),
 						message: z.string(),
 					}),
+					409: z.object({
+						status: z.literal(409),
+						message: z.string(),
+					}),
 				},
 			},
 		},
 		async (req, res) => {
 			const { id } = req.params
+			const { sub } = req.user
 
 			const getCommentResult = await sql`
         SELECT * FROM comments WHERE id = ${id};
@@ -38,6 +43,13 @@ export async function deleteComment(app: FastifyTypedInstance) {
 					status: 400,
 					message: 'Comment not found.',
 				})
+
+			if (comment.user_id !== sub) {
+				return res.status(409).send({
+					status: 409,
+					message: 'Not allowed!',
+				})
+			}
 
 			await sql`
         DELETE FROM comments 
