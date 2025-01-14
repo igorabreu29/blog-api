@@ -1,0 +1,20 @@
+services:
+  postgres:
+    container_name: posts_db
+    image: bitnami/postgresql:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  postgres_test:
+    container_name: posts_test_db
+    image: bitnami/postgresql:latest
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_TEST}
+      - POSTGRES_DB=${POSTGRES_DB_TEST}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_TEST}
