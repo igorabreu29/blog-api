@@ -3,7 +3,6 @@ import type { FastifyTypedInstance } from '@/types.ts'
 import { z } from 'zod'
 
 import { verifyJWT } from '@/http/middlewares/verify-jwt.ts'
-import { createId } from '@/utils/create-id.ts'
 import type { Post } from './types/post.ts'
 
 export async function editPost(app: FastifyTypedInstance) {
