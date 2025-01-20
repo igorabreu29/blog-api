@@ -26,7 +26,11 @@ describe('Add Comment to Post', () => {
 		const post = await makePost({ user_id: user.id })
 
 		const response = await request(app.server)
-			.post(`/posts/${post.id}/comments`)
+			.post('/comments')
+			.send({
+				postId: post.id,
+				comment: 'Comment',
+			})
 			.set('Cookie', cookie)
 			.expect(201)
 
