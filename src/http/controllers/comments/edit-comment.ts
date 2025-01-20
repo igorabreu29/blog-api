@@ -11,7 +11,7 @@ export async function editComment(app: FastifyTypedInstance) {
 		{
 			onRequest: [verifyJWT],
 			schema: {
-				tags: ['posts'],
+				tags: ['comments'],
 				description: 'Edit Commentary',
 				params: z.object({
 					id: z.string().uuid(),
