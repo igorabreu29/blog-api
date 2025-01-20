@@ -5,3 +5,18 @@ export interface Post {
 	description: string
 	image: string
 }
+
+export interface PostDetails {
+	id: string
+	title: string
+	description: string
+	image: string
+	created_at: Date
+	name: string
+	likes: string
+	comments: {
+		id: string
+		comment: string
+		name: string
+	}[]
+}
