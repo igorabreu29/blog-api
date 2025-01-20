@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker'
 import { makeUser } from './make-user.ts'
 
 export async function makePost(override: Partial<Post> = {}) {
-	const user = await makeUser()
+	const user = override.user_id ? { id: override.user_id } : await makeUser()
 
 	const post = {
 		id: createId(),

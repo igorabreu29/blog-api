@@ -6,8 +6,10 @@ import type { Comment } from '@/http/controllers/comments/types/comment.ts'
 import { faker } from '@faker-js/faker'
 
 export async function makeComment(override: Partial<Comment> = {}) {
-	const user = await makeUser()
-	const post = await makePost({ user_id: user.id })
+	const user = override.user_id ? { id: override.user_id } : await makeUser()
+	const post = override.post_id
+		? { id: override.post_id }
+		: await makePost({ user_id: user.id })
 
 	const comment = {
 		id: createId(),

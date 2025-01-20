@@ -5,8 +5,10 @@ import type { Like } from '@/http/controllers/likes/types/like.ts'
 import { makePost } from './make-post.ts'
 
 export async function makeLike(override: Partial<Like> = {}) {
-	const user = await makeUser()
-	const post = await makePost({ user_id: user.id })
+	const user = override.user_id ? { id: override.user_id } : await makeUser()
+	const post = override.post_id
+		? { id: override.post_id }
+		: await makePost({ user_id: user.id })
 
 	const like = {
 		id: createId(),
