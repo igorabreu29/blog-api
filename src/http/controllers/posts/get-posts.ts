@@ -27,9 +27,9 @@ export async function getPosts(app: FastifyTypedInstance) {
 								likes: z.number(),
 								comments: z.array(
 									z.object({
-										id: z.string(),
-										text: z.string(),
-										username: z.string(),
+										id: z.string().nullable(),
+										text: z.string().nullable(),
+										username: z.string().nullable(),
 									})
 								),
 							})
@@ -39,6 +39,33 @@ export async function getPosts(app: FastifyTypedInstance) {
 			},
 		},
 		async (req, res) => {
+			const total = await sql`
+				WITH comments_users AS (
+					SELECT comments.id, post_id, comment, users.name FROM comments
+					JOIN users
+					ON users.id = comments.user_id
+				)
+
+				SELECT 
+					posts.id,           
+					title,
+          description,
+          image,
+          posts.created_at,
+					JSON_AGG(
+						JSON_BUILD_OBJECT (
+							'id', comments_users.id, 
+							'comment', comments_users.comment, 
+							'name',comments_users.name
+							)
+					) as comments
+				FROM posts
+				LEFT JOIN comments_users
+				ON comments_users.post_id = posts.id
+				GROUP BY posts.id
+			`
+			console.log(total[0].comments)
+
 			const result = (await sql`
 				WITH comments_users AS (
 					SELECT comments.id, post_id, comment, users.name FROM comments
@@ -65,9 +92,9 @@ export async function getPosts(app: FastifyTypedInstance) {
 							)
 					) as comments
         FROM posts
-        JOIN users
+        LEFT JOIN users
         ON users.id = posts.user_id
-				JOIN comments_users 
+				LEFT JOIN comments_users 
 				ON comments_users.post_id = posts.id
 				GROUP BY posts.id, users.name
       `) as PostDetails[]

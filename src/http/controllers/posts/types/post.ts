@@ -15,8 +15,8 @@ export interface PostDetails {
 	name: string
 	likes: string
 	comments: {
-		id: string
-		comment: string
-		name: string
+		id: string | null
+		comment: string | null
+		name: string | null
 	}[]
 }
