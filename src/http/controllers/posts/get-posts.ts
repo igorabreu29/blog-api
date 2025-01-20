@@ -3,7 +3,8 @@ import type { FastifyTypedInstance } from '@/types.ts'
 import { z } from 'zod'
 
 import { verifyJWT } from '@/http/middlewares/verify-jwt.ts'
-import { createId } from '@/utils/create-id.ts'
+import { dayjs } from '@/lib/dayjs.ts'
+import type { PostDetails } from './types/post.ts'
 
 export async function getPosts(app: FastifyTypedInstance) {
 	app.get(
@@ -12,34 +13,39 @@ export async function getPosts(app: FastifyTypedInstance) {
 			onRequest: [verifyJWT],
 			schema: {
 				tags: ['posts'],
-				description: 'Create a new post',
+				description: 'Get posts',
 				response: {
-					// 200: z.object({
-					// 	id: z.string(),
-					// 	title: z.string(),
-					// 	description: z.string(),
-					// 	image: z.string(),
-					// 	createdAt: z.string(),
-					// 	username: z.string(),
-					// 	likes: z.number(),
-					// 	comments: z.array(
-					// 		z.object({
-					// 			id: z.string(),
-					// 			comment: z.string(),
-					// 			username: z.string(),
-					// 		})
-					// 	),
-					// }),
-
-					409: z.object({
-						status: z.literal(409),
-						message: z.string(),
+					200: z.object({
+						posts: z.array(
+							z.object({
+								id: z.string(),
+								title: z.string(),
+								description: z.string(),
+								image: z.string(),
+								createdAt: z.string(),
+								username: z.string(),
+								likes: z.number(),
+								comments: z.array(
+									z.object({
+										id: z.string(),
+										text: z.string(),
+										username: z.string(),
+									})
+								),
+							})
+						),
 					}),
 				},
 			},
 		},
 		async (req, res) => {
-			const posts = await sql`
+			const result = (await sql`
+				WITH comments_users AS (
+					SELECT comments.id, post_id, comment, users.name FROM comments
+					JOIN users
+					ON users.id = comments.user_id
+				)
+
         SELECT 
           posts.id,
           title,
@@ -47,22 +53,41 @@ export async function getPosts(app: FastifyTypedInstance) {
           image,
           posts.created_at,
           users.name,
-          COUNT(likes),
-          (
-            SELECT comments.id FROM comments
-            JOIN users
-            ON users.id = comments.user_id
-            WHERE comments.post_id = posts.id
-            GROUP BY posts.id
-          ) as comments
+					(
+						SELECT COUNT(*) FROM likes
+						WHERE post_id = posts.id
+					) as likes,
+					JSON_AGG(
+						JSON_BUILD_OBJECT (
+							'id', comments_users.id, 
+							'comment', comments_users.comment, 
+							'name',comments_users.name
+							)
+					) as comments
         FROM posts
         JOIN users
         ON users.id = posts.user_id
-        JOIN likes
-        ON likes.post_id = posts.id
-      `
+				JOIN comments_users 
+				ON comments_users.post_id = posts.id
+				GROUP BY posts.id, users.name
+      `) as PostDetails[]
 
-			return res.send(posts)
+			const posts = result.map(result => ({
+				id: result.id,
+				title: result.title,
+				description: result.description,
+				image: result.image,
+				createdAt: dayjs(result.created_at).format('DD/MM/YYYY'),
+				username: result.name,
+				likes: Number(result.likes),
+				comments: result.comments.map(({ id, comment, name }) => ({
+					id,
+					text: comment,
+					username: name,
+				})),
+			}))
+
+			return res.send({ posts })
 		}
 	)
 }
