@@ -23,7 +23,7 @@ export async function getPost(app: FastifyTypedInstance) {
 							id: z.string(),
 							title: z.string(),
 							description: z.string(),
-							image: z.string(),
+							image: z.string().nullable(),
 							createdAt: z.string(),
 							username: z.string(),
 							likes: z.number(),
