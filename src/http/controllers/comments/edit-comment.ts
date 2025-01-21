@@ -57,7 +57,7 @@ export async function editComment(app: FastifyTypedInstance) {
 			if (!commentary)
 				return res.status(400).send({
 					status: 400,
-					message: 'Commentary not found.',
+					message: 'Comment not found.',
 				})
 
 			if (commentary.user_id !== sub) {
