@@ -18,3 +18,9 @@ export interface UserAccount {
 		image: string | null
 	}[]
 }
+
+export interface AuthLinkWithUser {
+	code: string
+	user_id: string
+	role: string
+}

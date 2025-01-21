@@ -56,6 +56,14 @@ async function setup() {
     );
   `
 
+	await sql`
+    CREATE TABLE IF NOT EXISTS auth_links(
+      id TEXT NOT NULL PRIMARY KEY,
+      code TEXT NOT NULL UNIQUE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    );
+  `
+
 	await sql.end()
 }
 

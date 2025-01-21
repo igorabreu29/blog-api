@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeUser } from 'test/factories/make-user.ts'
+import { sql } from '@/lib/postgres.ts'
 
 describe('Sign In', () => {
 	beforeAll(async () => {
@@ -21,5 +22,11 @@ describe('Sign In', () => {
 		})
 
 		expect(response.status).toBe(201)
+
+		const authLinks = await sql`
+			SELECT * FROM auth_links
+		`
+
+		expect(authLinks).toHaveLength(1)
 	})
 })
