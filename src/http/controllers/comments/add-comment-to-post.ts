@@ -21,28 +21,12 @@ export async function addCommentToPost(app: FastifyTypedInstance) {
 					201: z.object({
 						id: z.string(),
 					}),
-
-					409: z.object({
-						status: z.literal(409),
-						message: z.string(),
-					}),
 				},
 			},
 		},
 		async (req, res) => {
 			const { sub } = req.user
 			const { postId, comment } = req.body
-
-			const getCommentResult = await sql`
-				SELECT * FROM comments WHERE user_id = ${sub} AND post_id = ${postId}
-			`
-
-			const commentExist = getCommentResult[0]
-			if (commentExist)
-				return res.status(409).send({
-					status: 409,
-					message: 'Commentary already be addedd.',
-				})
 
 			const id = createId()
 			const insertCommentResult = await sql`
