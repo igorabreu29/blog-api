@@ -14,6 +14,7 @@ export interface PostDetails {
 	created_at: Date
 	name: string
 	likes: string
+	comments_quantity: string
 	comments: {
 		id: string | null
 		comment: string | null
