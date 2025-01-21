@@ -25,13 +25,16 @@ export async function getPosts(app: FastifyTypedInstance) {
 								createdAt: z.string(),
 								username: z.string(),
 								likes: z.number(),
-								comments: z.array(
-									z.object({
-										id: z.string().nullable(),
-										text: z.string().nullable(),
-										username: z.string().nullable(),
-									})
-								),
+								comments: z.object({
+									quantity: z.number(),
+									commentaries: z.array(
+										z.object({
+											id: z.string().nullable(),
+											text: z.string().nullable(),
+											username: z.string().nullable(),
+										})
+									),
+								}),
 							})
 						),
 					}),
@@ -39,33 +42,6 @@ export async function getPosts(app: FastifyTypedInstance) {
 			},
 		},
 		async (req, res) => {
-			const total = await sql`
-				WITH comments_users AS (
-					SELECT comments.id, post_id, comment, users.name FROM comments
-					JOIN users
-					ON users.id = comments.user_id
-				)
-
-				SELECT 
-					posts.id,           
-					title,
-          description,
-          image,
-          posts.created_at,
-					JSON_AGG(
-						JSON_BUILD_OBJECT (
-							'id', comments_users.id, 
-							'comment', comments_users.comment, 
-							'name',comments_users.name
-							)
-					) as comments
-				FROM posts
-				LEFT JOIN comments_users
-				ON comments_users.post_id = posts.id
-				GROUP BY posts.id
-			`
-			console.log(total[0].comments)
-
 			const result = (await sql`
 				WITH comments_users AS (
 					SELECT comments.id, post_id, comment, users.name FROM comments
@@ -84,6 +60,10 @@ export async function getPosts(app: FastifyTypedInstance) {
 						SELECT COUNT(*) FROM likes
 						WHERE post_id = posts.id
 					) as likes,
+					(
+						SELECT COUNT(id) FROM comments
+						WHERE post_id = posts.id
+					) as comments_quantity,
 					JSON_AGG(
 						JSON_BUILD_OBJECT (
 							'id', comments_users.id, 
@@ -92,7 +72,7 @@ export async function getPosts(app: FastifyTypedInstance) {
 							)
 					) as comments
         FROM posts
-        LEFT JOIN users
+        JOIN users
         ON users.id = posts.user_id
 				LEFT JOIN comments_users 
 				ON comments_users.post_id = posts.id
@@ -107,11 +87,14 @@ export async function getPosts(app: FastifyTypedInstance) {
 				createdAt: dayjs(result.created_at).format('DD/MM/YYYY'),
 				username: result.name,
 				likes: Number(result.likes),
-				comments: result.comments.map(({ id, comment, name }) => ({
-					id,
-					text: comment,
-					username: name,
-				})),
+				comments: {
+					quantity: Number(result.comments_quantity),
+					commentaries: result.comments.map(({ id, comment, name }) => ({
+						id,
+						text: comment,
+						username: name,
+					})),
+				},
 			}))
 
 			return res.send({ posts })

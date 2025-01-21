@@ -27,13 +27,16 @@ export async function getPost(app: FastifyTypedInstance) {
 							createdAt: z.string(),
 							username: z.string(),
 							likes: z.number(),
-							comments: z.array(
-								z.object({
-									id: z.string(),
-									text: z.string(),
-									username: z.string(),
-								})
-							),
+							comments: z.object({
+								quantity: z.number(),
+								commentaries: z.array(
+									z.object({
+										id: z.string().nullable(),
+										text: z.string().nullable(),
+										username: z.string().nullable(),
+									})
+								),
+							}),
 						}),
 					}),
 				},
@@ -61,6 +64,10 @@ export async function getPost(app: FastifyTypedInstance) {
             SELECT COUNT(*) FROM likes
             WHERE post_id = posts.id
           ) as likes,
+					(
+						SELECT COUNT(id) FROM comments
+						WHERE post_id = posts.id
+					) as comments_quantity,
           JSON_AGG(
             JSON_BUILD_OBJECT (
               'id', comments_users.id, 
@@ -71,7 +78,7 @@ export async function getPost(app: FastifyTypedInstance) {
         FROM posts
         JOIN users
         ON users.id = posts.user_id
-        JOIN comments_users 
+        LEFT JOIN comments_users 
         ON comments_users.post_id = posts.id
         WHERE posts.id = ${id}
         GROUP BY posts.id, users.name
@@ -84,14 +91,17 @@ export async function getPost(app: FastifyTypedInstance) {
 				title: post.title,
 				description: post.description,
 				image: post.image,
-				createdAt: dayjs(post.created_at).format('DD/MM/YYYY'),
+				createdAt: dayjs(post.created_at).format('MM/DD/YYYY'),
 				username: post.name,
 				likes: Number(post.likes),
-				comments: post.comments.map(({ id, comment, name }) => ({
-					id,
-					text: comment,
-					username: name,
-				})),
+				comments: {
+					quantity: Number(post.comments_quantity),
+					commentaries: post.comments.map(({ id, comment, name }) => ({
+						id,
+						text: comment,
+						username: name,
+					})),
+				},
 			}
 
 			return res.send({ post: postMapper })

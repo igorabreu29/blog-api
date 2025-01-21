@@ -34,7 +34,8 @@ describe('Get Post', () => {
 		const response = await request(app.server)
 			.get(`/posts/${postCreated.id}`)
 			.set('Cookie', cookie)
-			.expect(200)
+
+		expect(response.statusCode).toBe(200)
 
 		const { post } = response.body
 
@@ -42,12 +43,15 @@ describe('Get Post', () => {
 			id: post.id,
 			username: user.name,
 			likes: 1,
-			comments: [
-				{
-					id: comment.id,
-					username: user2.name,
-				},
-			],
+			comments: {
+				quantity: 1,
+				commentaries: [
+					{
+						id: comment.id,
+						username: user2.name,
+					},
+				]
+			},
 		})
 	})
 })

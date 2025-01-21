@@ -48,16 +48,19 @@ describe('Get Posts', () => {
 			{
 				id: post.id,
 				username: user.name,
-				comments: [
-					{
-						id: comment.id,
-						username: user.name,
-					},
-					{
-						id: comment2.id,
-						username: user2.name,
-					},
-				],
+				comments: {
+					quantity: 2,
+					commentaries: [
+						{
+							id: comment.id,
+							username: user.name,
+						},
+						{
+							id: comment2.id,
+							username: user2.name,
+						},
+					],
+				},
 			},
 		])
 	})
