@@ -4,14 +4,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
 import { makePost } from 'test/factories/make-post.ts'
-import { sql } from '@/lib/postgres.ts'
 
 describe('Add Comment to Post', () => {
 	beforeAll(async () => {
-		await sql`DELETE FROM users;`
-		await sql`DELETE FROM posts;`
-		await sql`DELETE FROM comments;`
-
 		await app.ready()
 	})
 
@@ -19,7 +14,7 @@ describe('Add Comment to Post', () => {
 		await app.close()
 	})
 
-	it('POST /posts/:postId/comments', async () => {
+	it('[POST /comments] should add comment to post', async () => {
 		const { cookie, user } = await makeAuth()
 		if (!cookie) return
 

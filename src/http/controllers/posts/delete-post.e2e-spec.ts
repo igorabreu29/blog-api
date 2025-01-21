@@ -1,13 +1,18 @@
 import { app } from '@/app.ts'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
 import { makePost } from 'test/factories/make-post.ts'
 import { sql } from '@/lib/postgres.ts'
+import { createId } from '@/utils/create-id.ts'
+import { makeUser } from 'test/factories/make-user.ts'
 
 describe('Delete Post', () => {
-	beforeAll(async () => {
+	beforeEach(async () => {
+		await sql`DELETE FROM users;`
+		await sql`DELETE FROM posts;`
+
 		await app.ready()
 	})
 
@@ -15,7 +20,54 @@ describe('Delete Post', () => {
 		await app.close()
 	})
 
-	it('DELETE /posts', async () => {
+	it('[DELETE /posts/:id] should receive status 400 if post does not exist', async () => {
+		const { cookie, user } = await makeAuth()
+		if (!cookie) return
+
+		const id = createId()
+
+		const response = await request(app.server)
+			.delete(`/posts/${id}`)
+			.set('Cookie', cookie)
+
+		expect(response.statusCode).toBe(400)
+
+		const { message } = response.body
+		expect(message).toEqual('Post not found.')
+	})
+
+	it('[DELETE /posts/:id] should receive status 409 if user not allowed to delete post', async () => {
+		const { cookie } = await makeAuth({ role: 'STUDENT' })
+		if (!cookie) return
+
+		const user = await makeUser({ role: 'STUDENT' })
+		const post = await makePost({ user_id: user.id })
+
+		const response = await request(app.server)
+			.delete(`/posts/${post.id}`)
+			.set('Cookie', cookie)
+
+		expect(response.statusCode).toBe(409)
+
+		const { message } = response.body
+		expect(message).toEqual('Not allowed!')
+	})
+
+	it('[DELETE /posts/:id] should delete post (admin)', async () => {
+		const { cookie } = await makeAuth({ role: 'ADMIN' })
+		if (!cookie) return
+
+		const user = await makeUser({ role: 'STUDENT' })
+		const post = await makePost({ user_id: user.id })
+
+		const response = await request(app.server)
+			.delete(`/posts/${post.id}`)
+			.set('Cookie', cookie)
+
+		expect(response.statusCode).toBe(204)
+	})
+
+	it('[DELETE /posts/:id] should delete post', async () => {
 		const { cookie, user } = await makeAuth()
 		if (!cookie) return
 
