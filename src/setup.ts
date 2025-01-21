@@ -19,7 +19,7 @@ async function setup() {
       image TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-      user_id TEXT NOT NULL UNIQUE,
+      user_id TEXT NOT NULL,
       CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
   `
