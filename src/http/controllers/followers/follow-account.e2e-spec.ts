@@ -43,6 +43,23 @@ describe('Follow Account', () => {
 		expect(message).toEqual('User not found.')
 	})
 
+	it('[POST /followers] should receive status 409 if user is trying follow himself', async () => {
+		const { cookie, user } = await makeAuth()
+		if (!cookie) return
+
+		const response = await request(app.server)
+			.post('/followers')
+			.send({
+				followeeId: user.id,
+			})
+			.set('Cookie', cookie)
+
+		expect(response.statusCode).toBe(409)
+
+		const { message } = response.body
+		expect(message).toEqual('It is not allowed! You cannot follow yourself.')
+	})
+
 	it('[POST /followers] should unfollow if it already following user', async () => {
 		const { cookie, user } = await makeAuth()
 		if (!cookie) return

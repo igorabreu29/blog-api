@@ -24,6 +24,10 @@ export async function followAccount(app: FastifyTypedInstance) {
 						status: z.literal(400),
 						message: z.string(),
 					}),
+					409: z.object({
+						status: z.literal(409),
+						message: z.string(),
+					}),
 				},
 			},
 		},
@@ -38,6 +42,13 @@ export async function followAccount(app: FastifyTypedInstance) {
 			const followeeUser = getUserResult[0] as Pick<User, 'id'>
 			if (!followeeUser) {
 				return res.status(400).send({ message: 'User not found.', status: 400 })
+			}
+
+			if (followeeUser.id === sub) {
+				return res.status(409).send({
+					status: 409,
+					message: 'It is not allowed! You cannot follow yourself.',
+				})
 			}
 
 			const alreadyFollowingResult = await sql`
