@@ -23,9 +23,9 @@ describe('Get User Profile', () => {
 
 		expect(response.status).toBe(200)
 
-		const { user } = response.body
+		const { account } = response.body
 
-		expect(user).toMatchObject({
+		expect(account).toMatchObject({
 			id: userCreated.id,
 		})
 	})

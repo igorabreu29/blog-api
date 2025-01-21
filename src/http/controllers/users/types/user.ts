@@ -5,3 +5,16 @@ export interface User {
 	role: string
 	created_at: string
 }
+
+export interface UserAccount {
+	id: string
+	name: string
+	email: string
+	followers: string
+	following: string
+	posts: {
+		id: string | null
+		title: string | null
+		image: string | null
+	}[]
+}
