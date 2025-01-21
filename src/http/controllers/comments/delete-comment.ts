@@ -31,7 +31,7 @@ export async function deleteComment(app: FastifyTypedInstance) {
 		},
 		async (req, res) => {
 			const { id } = req.params
-			const { sub } = req.user
+			const { sub, role } = req.user
 
 			const getCommentResult = await sql`
         SELECT * FROM comments WHERE id = ${id};
@@ -44,7 +44,7 @@ export async function deleteComment(app: FastifyTypedInstance) {
 					message: 'Comment not found.',
 				})
 
-			if (comment.user_id !== sub) {
+			if (role === 'student' && comment.user_id !== sub) {
 				return res.status(409).send({
 					status: 409,
 					message: 'Not allowed!',

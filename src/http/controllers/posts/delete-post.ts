@@ -30,7 +30,7 @@ export async function deletePost(app: FastifyTypedInstance) {
 			},
 		},
 		async (req, res) => {
-			const { sub } = req.user
+			const { sub, role } = req.user
 			const { id } = req.params
 
 			const getPostResult = await sql`
@@ -44,7 +44,7 @@ export async function deletePost(app: FastifyTypedInstance) {
 					message: 'Post not found.',
 				})
 
-			if (post.user_id !== sub) {
+			if (role === 'student' && post.user_id !== sub) {
 				return res.status(409).send({
 					status: 409,
 					message: 'Not allowed!',
