@@ -10,13 +10,6 @@ import { makeFollow } from 'test/factories/make-follow.ts'
 
 describe('Follow Account', () => {
 	beforeAll(async () => {
-		await sql`
-			DELETE FROM users;
-		`
-		await sql`
-			DELETE FROM followers;
-		`
-
 		await app.ready()
 	})
 

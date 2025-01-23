@@ -15,6 +15,6 @@ beforeAll(() => {
 })
 
 afterAll(async () => {
-	await sql`TRUNCATE TABLE users RESTART IDENTITY CASCADE;`
+	await sql`TRUNCATE TABLE users, posts, likes, followers, comments, auth_links CASCADE;`
 	await sql.end()
 })

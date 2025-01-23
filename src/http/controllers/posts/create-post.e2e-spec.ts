@@ -1,16 +1,12 @@
 import { app } from '@/app.ts'
-import { afterAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
-import { sql } from '@/lib/postgres.ts'
 import { makePost } from 'test/factories/make-post.ts'
 
 describe('Create Post', () => {
-	beforeEach(async () => {
-		await sql`DELETE FROM users;`
-		await sql`DELETE FROM posts;`
-
+	beforeAll(async () => {
 		await app.ready()
 	})
 

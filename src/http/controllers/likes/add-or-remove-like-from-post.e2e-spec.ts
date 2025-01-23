@@ -1,5 +1,5 @@
 import { app } from '@/app.ts'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
@@ -8,11 +8,7 @@ import { sql } from '@/lib/postgres.ts'
 import { makeLike } from 'test/factories/make-like.ts'
 
 describe('Add or remove like from post', () => {
-	beforeEach(async () => {
-		await sql`DELETE FROM users;`
-		await sql`DELETE FROM posts;`
-		await sql`DELETE FROM likes;`
-
+	beforeAll(async () => {
 		await app.ready()
 	})
 

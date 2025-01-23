@@ -1,5 +1,5 @@
 import { app } from '@/app.ts'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
@@ -9,10 +9,7 @@ import { createId } from '@/utils/create-id.ts'
 import { makeUser } from 'test/factories/make-user.ts'
 
 describe('Delete Post', () => {
-	beforeEach(async () => {
-		await sql`DELETE FROM users;`
-		await sql`DELETE FROM posts;`
-
+	beforeAll(async () => {
 		await app.ready()
 	})
 
@@ -21,7 +18,7 @@ describe('Delete Post', () => {
 	})
 
 	it('[DELETE /posts/:id] should receive status 400 if post does not exist', async () => {
-		const { cookie, user } = await makeAuth()
+		const { cookie } = await makeAuth()
 		if (!cookie) return
 
 		const id = createId()

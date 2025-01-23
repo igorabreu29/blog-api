@@ -1,5 +1,5 @@
 import { app } from '@/app.ts'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import request from 'supertest'
 import { makeAuth } from 'test/factories/make-auth.ts'
@@ -9,11 +9,7 @@ import { createId } from '@/utils/create-id.ts'
 import { makeUser } from 'test/factories/make-user.ts'
 
 describe('Edit Comment', () => {
-	beforeEach(async () => {
-		await sql`DELETE FROM users;`
-		await sql`DELETE FROM posts;`
-		await sql`DELETE FROM comments;`
-
+	beforeAll(async () => {
 		await app.ready()
 	})
 
