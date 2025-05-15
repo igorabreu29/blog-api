@@ -3,11 +3,13 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules, .vscode, .github, uploads"]
+    "ignore": [
+      "node_modules, .vscode, .github, uploads"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -15,13 +17,17 @@
     "ignore": [],
     "indentStyle": "tab",
     "lineEnding": "lf",
-    "lineWidth": 80
+    "lineWidth": 100
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": true,
+    "ignore": []
   },
   "linter": {
     "enabled": true,
+    "ignore": [
+      "node_modules"
+    ],
     "rules": {
       "recommended": true,
       "complexity": {
@@ -41,8 +47,7 @@
       "arrowParentheses": "asNeeded",
       "trailingCommas": "es5",
       "quoteStyle": "single",
-      "semicolons": "asNeeded",
-      "indentWidth": 2
+      "semicolons": "asNeeded"
     }
   },
   "json": {
