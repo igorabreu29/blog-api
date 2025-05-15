@@ -8,6 +8,7 @@ async function seed() {
 	await sql`DROP TABLE comments CASCADE`
 	await sql`DROP TABLE likes CASCADE`
 	await sql`DROP TABLE followers CASCADE`
+	await sql`DROP TABLE attachments CASCADE`
 
 	execSync('pnpm run setup')
 
@@ -22,6 +23,8 @@ async function seed() {
     INSERT INTO users (id, name, email, role)
     VALUES (${user.id}, ${user.name}, ${user.email}, ${user.role})
   `
+
+	await sql.end()
 }
 
 await seed()
