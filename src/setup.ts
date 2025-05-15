@@ -4,7 +4,7 @@ async function setup() {
 	await sql`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT NOT NULL PRIMARY KEY,
-      name TEXT NOT NULL,
+      name VARCHAR(255) NOT NULL,
       email TEXT NOT NULL UNIQUE,
       role TEXT NOT NULL DEFAULT 'CUSTOMER',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -61,6 +61,13 @@ async function setup() {
       id TEXT NOT NULL PRIMARY KEY,
       code TEXT NOT NULL UNIQUE,
       user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    );
+  `
+
+	await sql`
+    CREATE TABLE IF NOT EXISTS attachments(
+      id TEXT NOT NULL PRIMARY KEY,
+      url TEXT NOT NULL
     );
   `
 
