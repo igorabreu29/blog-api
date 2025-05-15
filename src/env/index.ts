@@ -7,6 +7,10 @@ export const envSchema = z.object({
 	JWT_SECRET: z.string(),
 	API_URL: z.string().url(),
 	AUTH_REDIRECT_URL: z.string().url(),
+	CLOUDFLARE_ACCOUNT_ID: z.string(),
+	R2_ACCESS_KEY_ID: z.string(),
+	R2_SECRET_ACCESS_KEY: z.string(),
+	R2_BUCKET_NAME: z.string()
 })
 
 export const env = envSchema.parse(process.env)
