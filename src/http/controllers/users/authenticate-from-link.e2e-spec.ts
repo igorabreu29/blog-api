@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { makeUser } from 'test/factories/make-user.ts'
 import { makeAuthLink } from 'test/factories/make-auth-link.ts'
-import { faker, ur } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { sql } from '@/lib/postgres.ts'
 
 describe('Authenticate With Email', () => {
