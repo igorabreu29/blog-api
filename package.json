@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "tsx watch --env-file .env src/http/server.ts",
     "setup": "tsx --env-file .env src/setup.ts",
+    "seed": "tsx --env-file .env src/seed.ts",
     "setup:test": "tsx --env-file .env.test src/setup.ts",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -30,12 +31,15 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.810.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.3",
+    "@fastify/multipart": "^9.0.3",
     "@fastify/swagger": "^9.4.1",
     "@fastify/swagger-ui": "^5.2.1",
     "dayjs": "^1.11.13",
     "fastify": "^5.2.1",
+    "fastify-multer": "^2.0.3",
     "fastify-type-provider-zod": "^4.0.2",
     "nodemailer": "^6.9.16",
     "postgres": "^3.4.5",
