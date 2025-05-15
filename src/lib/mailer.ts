@@ -1,11 +1,12 @@
+import { env } from '@/env/index.ts'
 import nodemailer from 'nodemailer'
 
 const config = {
-	host: 'smtp.ethereal.email',
-	port: 587,
+	host: env.MAIL_HOST,
+	port: env.MAIL_PORT,
 	auth: {
-		user: 'yesenia.okuneva@ethereal.email',
-		pass: 'HjUATNu8rbfU62cqMU',
+		user: env.MAIL_USER,
+		pass: env.MAIL_PASS,
 	},
 }
 
