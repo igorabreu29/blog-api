@@ -49,7 +49,7 @@ export async function signIn(app: FastifyTypedInstance) {
 				VALUES (${id}, ${code}, ${userWithEmail.id})
 			`
 
-			const authLink = new URL('/authenticate', env.API_URL)
+			const authLink = new URL('/links/authenticate', env.API_URL)
 			authLink.searchParams.set('code', code)
 			authLink.searchParams.set('redirectUrl', env.AUTH_REDIRECT_URL)
 
